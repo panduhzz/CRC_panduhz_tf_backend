@@ -33,15 +33,11 @@ resource "azurerm_cosmosdb_table" "panduhz-tbl" {
   throughput          = 400
 }
 #need app service plan for linux function app
-resource "azurerm_app_service_plan" "panduhzsrvc" {
+resource "azurerm_service_plan" "panduhzsrvc" {
   name                = "api-appserviceplan-pro"
   location            = azurerm_resource_group.backend-rg.location
   resource_group_name = azurerm_resource_group.backend-rg.name
-  kind                = "Linux"
-  reserved            = true
+  os_type             = "Linux"
 
-  sku {
-    tier = "Y1"
-    size = "Y1"
-  }
+  sku_name = "Y1"
 }
