@@ -1,0 +1,25 @@
+{
+"bindings": [
+    {
+        "type": "httpTrigger",
+        "direction": "in",
+        "name": "req",
+        "methods": ["post", "get"]
+    },
+    {
+        "type": "http",
+        "direction": "out",
+        "name": "$return"
+    },
+    {
+      "type": "cosmosDB",
+      "direction": "out",
+      "name": "document",
+      "databaseName": "TablesDB",
+      "collectionName": "azurerm",
+      "connectionStringSetting": "AzureResumeConnectionString"
+    }
+  ],
+  "scriptFile": "function_app.py",
+  "entryPoint": "http_trigger"
+}
