@@ -51,7 +51,7 @@ resource "azurerm_log_analytics_workspace" "workspace" {
   name                = "panduhz-workspace"
   location            = azurerm_resource_group.backend-rg.location
   resource_group_name = azurerm_resource_group.backend-rg.name
-  sku                 = "Standard"
+  sku                 = "PerGB2018"
   retention_in_days   = 30
 }
 #creating an application insights resource for our function app to view logs
@@ -93,6 +93,8 @@ resource "azurerm_linux_function_app" "crcbackend" {
   }
   app_settings = {
     "WEBSITE_RUN_FROM_PACKAGE" = 1
+    ENABLE_ORYX_BUILD=true
+    SCM_DO_BUILD_DURING_DEPLOYMENT=true
   }
   #declaring source files
   #zip_deploy_file = "/src/"
