@@ -71,6 +71,7 @@ resource "azurerm_service_plan" "panduhzsrvc" {
 
   sku_name = "Y1"
 }
+
 #creating linux function app resource
 resource "azurerm_linux_function_app" "crcbackend" {
   name                = "backend-function-app"
