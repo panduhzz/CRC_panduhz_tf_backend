@@ -42,11 +42,12 @@ resource "azurerm_cosmosdb_account" "panduhz-db" {
   }
 }
 resource "azurerm_cosmosdb_table" "panduhz-tbl" {
-  name                = "panduhz-table"
+  name                = "azurerm"
   resource_group_name = azurerm_cosmosdb_account.panduhz-db.resource_group_name
   account_name        = azurerm_cosmosdb_account.panduhz-db.name
   throughput          = 400
 }
+
 resource "azurerm_log_analytics_workspace" "workspace" {
   name                = "panduhz-workspace"
   location            = azurerm_resource_group.backend-rg.location
@@ -86,17 +87,17 @@ resource "azurerm_linux_function_app" "crcbackend" {
     application_insights_connection_string = azurerm_application_insights.panduhzinsight.connection_string
     application_insights_key               = azurerm_application_insights.panduhzinsight.instrumentation_key
     cors {
-      allowed_origins = [ "https://www.panduhzco.com" ]
+      allowed_origins = ["https://www.panduhzco.com"]
     }
     application_stack {
       python_version = 3.11
     }
   }
-  app_settings = {
-    "WEBSITE_RUN_FROM_PACKAGE" = 1
-    ENABLE_ORYX_BUILD=true
-    SCM_DO_BUILD_DURING_DEPLOYMENT=true
-  }
   #declaring source files
   #zip_deploy_file = "/src/"
+}
+
+output "cosmosdb_connectionstrings" {
+   value = azurerm_cosmosdb_account.panduhz-db.connection_strings
+   sensitive   = true
 }
