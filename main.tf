@@ -77,6 +77,7 @@ resource "azurerm_service_plan" "panduhzsrvc" {
 
 #creating linux function app resource
 resource "azurerm_linux_function_app" "crcbackend" {
+  depends_on = [ azurerm_cosmosdb_account.panduhz-db ]
   name                = "backend-function-app"
   resource_group_name = azurerm_resource_group.backend-rg.name
   location            = azurerm_resource_group.backend-rg.location
