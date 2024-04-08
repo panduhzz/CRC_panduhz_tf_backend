@@ -120,3 +120,4 @@ jobs:
           # Retrieve function key
           FUNCTION_KEYS=$(az functionapp function keys list --resource-group $RESOURCE_GROUP --name $FUNCTION_APP_NAME --function-name $FUNCTION_NAME)
           echo "Function Keys: $FUNCTION_KEYS
+        shell: bash
