@@ -112,10 +112,11 @@ jobs:
       
       - name: Output function key
         run: |
-          FUNCTION_APP_NAME='yourFunctionAppName'
-          FUNCTION_NAME='yourFunctionName'
+          # Use the environment variables
+          FUNCTION_APP_NAME=${{ env.AZURE_FUNCTIONAPP_NAME }}
+          RESOURCE_GROUP=${{ env.RESOURCE_GROUP_NAME }}
+          FUNCTION_NAME='http_trigger'  # Since you mentioned the function name is http_trigger
+
           # Retrieve function key
-          FUNCTION_KEY=$(az functionapp function keys list --name ${{env.AZURE_FUNCTIONAPP_NAME}} --function-name http_trigger --resource-group ${{ env.RESOURCE_GROUP_NAME }} --query default --output tsv)
-          echo "Function Key: $FUNCTION_KEY"
-          # Set the function key as an output (optional)
-          echo "FUNCTION_KEY=$FUNCTION_KEY" >> $GITHUB_ENV
+          FUNCTION_KEYS=$(az functionapp function keys list --resource-group $RESOURCE_GROUP --name $FUNCTION_APP_NAME --function-name $FUNCTION_NAME)
+          echo "Function Keys: $FUNCTION_KEYS
