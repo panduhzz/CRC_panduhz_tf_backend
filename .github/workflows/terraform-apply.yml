@@ -12,6 +12,7 @@ env:
   AZURE_FUNCTIONAPP_NAME: 'backend-function-app'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './src'
   PYTHON_VERSION: '3.11'
+  RESOURCE_GROUP_NAME: 'Terraform Test'
 
 
 jobs:
@@ -47,7 +48,7 @@ jobs:
           run: ${{ steps.apply-run.outputs.run_id }}
           comment: "Apply Run from GitHub Actions CI ${{ github.sha }}"
   test: 
-    needs: terraform
+    needs: deploy_function
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
@@ -75,7 +76,7 @@ jobs:
         path: test-results/
         retention-days: 7
   deploy_function: 
-    needs: test
+    needs: terraform
     name: "Deploy Function"
     runs-on: Ubuntu-latest
     steps:
@@ -108,3 +109,13 @@ jobs:
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           scm-do-build-during-deployment: true
           enable-oryx-build: true
+      
+      - name: Output function key
+        run: |
+          FUNCTION_APP_NAME='yourFunctionAppName'
+          FUNCTION_NAME='yourFunctionName'
+          # Retrieve function key
+          FUNCTION_KEY=$(az functionapp function keys list --name ${{env.AZURE_FUNCTIONAPP_NAME}} --function-name http_trigger --resource-group ${{ env.RESOURCE_GROUP_NAME }} --query default --output tsv)
+          echo "Function Key: $FUNCTION_KEY"
+          # Set the function key as an output (optional)
+          echo "FUNCTION_KEY=$FUNCTION_KEY" >> $GITHUB_ENV
