@@ -40,6 +40,9 @@ resource "azurerm_cosmosdb_account" "panduhz-db" {
   capabilities {
     name = "EnableTable"
   }
+  capabilities {
+    name = "EnableServerless"
+  }
 }
 resource "azurerm_cosmosdb_table" "panduhz-tbl" {
   name                = "azurerm"
