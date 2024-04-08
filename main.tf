@@ -27,7 +27,6 @@ resource "azurerm_cosmosdb_account" "panduhz-db" {
   location            = azurerm_resource_group.backend-rg.location
   resource_group_name = azurerm_resource_group.backend-rg.name
   offer_type                = "Standard"
-  kind                      = "GlobalDocumentDB"
   geo_location {
     location          = "westus2"
     failover_priority = 0
