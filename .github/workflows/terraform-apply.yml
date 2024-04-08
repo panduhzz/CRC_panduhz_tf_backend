@@ -46,6 +46,31 @@ jobs:
         with:
           run: ${{ steps.apply-run.outputs.run_id }}
           comment: "Apply Run from GitHub Actions CI ${{ github.sha }}"
+  test: 
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-asyncio playwright
+        playwright install
+    - name: Ensure browsers are installed
+      run: python -m playwright install --with-deps
+    - name: Run Playwright tests
+      env: 
+        CosmosConnectionString: ${{ secrets.CosmosConnectionString }}
+      run: pytest --tracing=retain-on-failure
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-traces
+        path: test-results/
+        retention-days: 7
   deploy_function: 
     needs: terraform
     name: "Deploy Function"
