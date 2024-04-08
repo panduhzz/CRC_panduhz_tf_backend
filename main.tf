@@ -95,6 +95,9 @@ resource "azurerm_linux_function_app" "crcbackend" {
       python_version = 3.11
     }
   }
+  app_settings = {
+    CosmosConnectionString = azurerm_cosmosdb_account.panduhz-db.primary_sql_connection_string
+  }
   #declaring source files
   #zip_deploy_file = "/src/"
 }
