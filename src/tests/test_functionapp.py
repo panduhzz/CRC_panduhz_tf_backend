@@ -15,7 +15,7 @@ async def test_returns_200():
     async with async_playwright() as p:
         browser = await p.chromium.launch()
         page = await browser.new_page()
-        response = await page.goto('https://www.panduhz.com/$web/index.html')
+        response = await page.goto('https://www.panduhzco.com/$web/index.html')
         assert response.status == 200
         print(response)
         await browser.close()
@@ -25,7 +25,7 @@ async def test_number_updates():
     async with async_playwright() as p:
         browser = await p.chromium.launch()
         page = await browser.new_page()
-        await page.goto("https://www.panduhz.com/$web/index.html")
+        await page.goto("https://www.panduhzco.com/$web/index.html")
         #waiting for the DOM content to load from JavaScript to update with current visitor count
         await page.wait_for_function(r"document.querySelector('.visitor-counter').textContent.match(/\d+/)")
         text = await page.query_selector('.visitor-counter')
@@ -57,7 +57,7 @@ async def test_table_not_initalized():
     async with async_playwright() as p:
         browser = await p.chromium.launch()
         page = await browser.new_page()
-        await page.goto("https://www.panduhz.com/$web/index.html")
+        await page.goto("https://www.panduhzco.com/$web/index.html")
         #waiting for the DOM content to load from JavaScript to update with current visitor count
         await page.wait_for_function(r"document.querySelector('.visitor-counter').textContent.match(/\d+/)")
         text = await page.query_selector('.visitor-counter')
