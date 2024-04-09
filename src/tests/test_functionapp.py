@@ -47,13 +47,13 @@ async def test_number_updates():
         assert updatedCount == firstCount + 1, "Counter did not update as expected."
 
 @pytest.mark.asyncio
-async def test_table_not_initalized():
+async def test_counter_at_0():
     connection_string = os.getenv('CosmosConnectionString')
     table_name = "azurerm"
-    with TableClient.from_connection_string(
-            conn_str=connection_string, table_name=table_name
-        ) as table_client:
-        table_client.delete_table()
+    with TableClient.from_connection_string(connection_string, table_name="azurerm") as table_client:
+        entityCount = table_client.get_entity(partition_key="pk", row_key="counter")
+        entityCount["count"] = 0
+        table_client.update_entity(entity=entityCount)
     async with async_playwright() as p:
         browser = await p.chromium.launch()
         page = await browser.new_page()
