@@ -117,9 +117,9 @@ jobs:
           RESOURCE_GROUP=${{ env.RESOURCE_GROUP_NAME }}
           FUNCTION_NAME='http_trigger'  # Since you mentioned the function name is http_trigger
 
-          FUNCTION_CODE=$(az functionapp function keys list -g $RESOURCE_GROUP -n $FUNCTION_APP_NAME --function-name http_trigger --query "default")
+          FUNCTION_CODE=$(az functionapp function keys list -g "$RESOURCE_GROUP" -n "$FUNCTION_APP_NAME" --function-name http_trigger --query "default")
           FUNCTION_CODE=$(echo "$FUNCTION_CODE" | tr -d '"') #Remove "" from result
-          FUNCTION_URL=$(az functionapp function show --function-name http_trigger --resource-group $RESOURCE_GROUP --query "invokeUrlTemplate" --output tsv --name $FUNCTION_APP_NAME)
+          FUNCTION_URL=$(az functionapp function show --function-name http_trigger --resource-group "$RESOURCE_GROUP" --query "invokeUrlTemplate" --output tsv --name "$FUNCTION_APP_NAME")
           FUNCTION_URL=$(echo $FUNCTION_URL|tr -d '\r\n') #Remove breaklines from result
           INVOKE_FUNCTION="$FUNCTION_URL?code=$FUNCTION_CODE"
           echo "Function URL: $INVOKE_FUNCTION"
