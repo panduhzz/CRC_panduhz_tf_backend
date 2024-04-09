@@ -97,7 +97,7 @@ resource "azurerm_linux_function_app" "crcbackend" {
     }
   }
   app_settings = {
-    CosmosConnectionString = azurerm_cosmosdb_account.panduhz-db.primary_sql_connection_string
+    CosmosConnectionString = azurerm_cosmosdb_account.panduhz-db.connection_strings[3]
   }
   #declaring source files
   #zip_deploy_file = "/src/"
@@ -106,7 +106,4 @@ resource "azurerm_linux_function_app" "crcbackend" {
 output "cosmosdb_connectionstrings" {
   value = azurerm_cosmosdb_account.panduhz-db.connection_strings
   sensitive = true
-}
-output "cosmosdb_endpoints" {
-  value = azurerm_cosmosdb_account.panduhz-db.write_endpoints
 }
