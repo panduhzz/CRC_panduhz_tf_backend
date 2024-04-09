@@ -104,7 +104,8 @@ resource "azurerm_linux_function_app" "crcbackend" {
 }
 
 output "cosmosdb_connectionstrings" {
-   value = azurerm_cosmosdb_account.panduhz-db.connection_strings
+  value = azurerm_cosmosdb_account.panduhz-db.connection_strings
+  sensitive = true
 }
 output "cosmosdb_endpoints" {
   value = azurerm_cosmosdb_account.panduhz-db.write_endpoints
