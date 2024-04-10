@@ -100,7 +100,7 @@ resource "azurerm_monitor_metric_alert" "alert1" {
   description = "Alert will monitor how many requests are sent to function app"
 
   criteria {
-    metric_namespace = "Microsoft.Web/sites/functions"
+    metric_namespace = "Microsoft.Web/sites"
     metric_name      = "AverageResponseTime"
     aggregation = "Average"
     operator = "GreaterThan"
