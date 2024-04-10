@@ -96,15 +96,37 @@ resource "azurerm_monitor_action_group" "example" {
 resource "azurerm_monitor_metric_alert" "alert1" {
   name = "alert1-logalert"
   resource_group_name = azurerm_resource_group.backend-rg.name
-  scopes = [azurerm_linux_function_app.crcbackend.id]
-  description = "Alert will monitor how many requests are sent to function app"
+  scopes = [azurerm_application_insights.panduhzinsight.id]
+  description = "If there are 10 requests in a minute"
 
   criteria {
-    metric_namespace = "Microsoft.Web/sites"
-    metric_name      = "AverageResponseTime"
+    metric_namespace = "microsoft.insights/components"
+    metric_name      = "requests/count"
+    aggregation      = "Total"
+    operator         = "GreaterThan"
+    threshold        = 10
+    dimension {
+      name     = "request/resultCode"
+      operator = "Include"
+      values   = ["*"]
+    }
+  }
+  action {
+    action_group_id = azurerm_monitor_action_group.example.id
+  }
+}
+resource "azurerm_monitor_metric_alert" "alert2" {
+  name = "alert2-logalert"
+  resource_group_name = azurerm_resource_group.backend-rg.name
+  scopes = [azurerm_application_insights.panduhzinsight.id]
+  description = "Alert if avg response times are greater than 2 seconds"
+
+  criteria {
+    metric_namespace = "microsoft.insights/components"
+    metric_name = "requests/duration"
     aggregation = "Average"
     operator = "GreaterThan"
-    threshold = "4"
+    threshold = "2000"
   }
   action {
     action_group_id = azurerm_monitor_action_group.example.id
