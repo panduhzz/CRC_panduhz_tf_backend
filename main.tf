@@ -74,7 +74,42 @@ resource "azurerm_service_plan" "panduhzsrvc" {
 
   sku_name = "Y1"
 }
+#
+resource "azurerm_monitor_action_group" "example" {
+  name = "PanduhzAlertAction"
+  resource_group_name = azurerm_resource_group.backend-rg.name
+  short_name = "l1action"
+  azure_app_push_receiver {
+    name          = "pushtoadmin"
+    email_address = "christopherchannn@gmail.com"
+  }
+  sms_receiver {
+    name = "pushtophone"
+    country_code = "1"
+    phone_number = "6265607176"
+  }
+  email_receiver {
+    name = "emailtoadmin"
+    email_address = "christopherchannn@gmail.com"
+  }
+}
+resource "azurerm_monitor_metric_alert" "alert1" {
+  name = "alert1-logalert"
+  resource_group_name = azurerm_resource_group.backend-rg.name
+  scopes = [azurerm_linux_function_app.crcbackend.id]
+  description = "Alert will monitor how many requests are sent to function app"
 
+  criteria {
+    metric_namespace = "Microsoft.Web/sites/functions"
+    metric_name      = "AverageResponseTime"
+    aggregation = "Average"
+    operator = "GreaterThan"
+    threshold = "4"
+  }
+  action {
+    action_group_id = azurerm_monitor_action_group.example.id
+  }
+}
 #creating linux function app resource
 resource "azurerm_linux_function_app" "crcbackend" {
   depends_on = [ azurerm_cosmosdb_account.panduhz-db ]
