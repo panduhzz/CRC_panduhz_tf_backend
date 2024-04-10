@@ -102,7 +102,7 @@ resource "azurerm_monitor_metric_alert" "alert1" {
   criteria {
     metric_namespace = "microsoft.insights/components"
     metric_name      = "requests/count"
-    aggregation      = "Total"
+    aggregation      = "Count"
     operator         = "GreaterThan"
     threshold        = 10
     dimension {
