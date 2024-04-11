@@ -97,6 +97,11 @@ resource "azurerm_logic_app_trigger_http_request" "slack_trigger" {
 }
 SCHEMA
 }
+variable "SLACK_BOT_TOKEN" {
+  type        = string
+  description = "Token for authenticating requests to Slack"
+  sensitive   = true
+}
 resource "azurerm_logic_app_action_http" "post_to_slack" {
   name         = "post-to-slack"
   logic_app_id = azurerm_logic_app_workflow.slack_notifier.id
@@ -104,7 +109,7 @@ resource "azurerm_logic_app_action_http" "post_to_slack" {
   uri          = "https://slack.com/api/chat.postMessage"
 
   headers = {
-    "Authorization" = "Bearer ${env.SLACK_BOT_TOKEN}"
+    "Authorization" = "Bearer ${var.SLACK_BOT_TOKEN}"
     "Content-Type"  = "application/json"
   }
 
