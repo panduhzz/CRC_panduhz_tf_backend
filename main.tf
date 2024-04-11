@@ -98,7 +98,9 @@ resource "azurerm_logic_app_trigger_http_request" "slack_trigger" {
 SCHEMA
 }
 variable "SLACK_BOT_TOKEN" {
-  type = string
+  type        = string
+  description = "Token for authenticating requests to Slack"
+  sensitive   = true
 }
 resource "azurerm_logic_app_action_http" "post_to_slack" {
   name         = "post-to-slack"
