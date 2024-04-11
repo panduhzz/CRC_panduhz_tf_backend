@@ -97,9 +97,6 @@ resource "azurerm_logic_app_trigger_http_request" "slack_trigger" {
 }
 SCHEMA
 }
-variable "SLACK_BOT_TOKEN" {
-  type = string
-}
 resource "azurerm_logic_app_action_http" "post_to_slack" {
   name         = "post-to-slack"
   logic_app_id = azurerm_logic_app_workflow.slack_notifier.id
