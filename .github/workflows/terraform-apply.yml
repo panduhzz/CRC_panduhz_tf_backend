@@ -109,14 +109,3 @@ jobs:
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           scm-do-build-during-deployment: true
           enable-oryx-build: true
-      
-      - name: Output function key
-        run: |
-          # Use the environment variables
-          FUNCTION_APP_NAME=${{ env.AZURE_FUNCTIONAPP_NAME }}
-          RESOURCE_GROUP=${{ env.RESOURCE_GROUP_NAME }}
-          FUNCTION_NAME='http_trigger'  # Since you mentioned the function name is http_trigger
-
-          # Retrieve function key
-          FUNCTION_KEYS=$(az functionapp function keys list --resource-group $RESOURCE_GROUP --name $FUNCTION_APP_NAME --function-name $FUNCTION_NAME)
-          echo "Function Keys: $FUNCTION_KEYS
