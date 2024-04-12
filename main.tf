@@ -26,7 +26,7 @@ resource "azurerm_cosmosdb_account" "panduhz-db" {
   name                = "panduhz-counter-cosmosdb"
   location            = azurerm_resource_group.backend-rg.location
   resource_group_name = azurerm_resource_group.backend-rg.name
-  offer_type                = "Standard"
+  offer_type          = "Standard"
   geo_location {
     location          = "westus2"
     failover_priority = 0
@@ -74,30 +74,80 @@ resource "azurerm_service_plan" "panduhzsrvc" {
 
   sku_name = "Y1"
 }
-#
-resource "azurerm_monitor_action_group" "example" {
-  name = "PanduhzAlertAction"
+#Logic App for Slack Message
+resource "azurerm_logic_app_workflow" "slack_notifier" {
+  name                = "SlackNotifier"
+  location            = azurerm_resource_group.backend-rg.location
   resource_group_name = azurerm_resource_group.backend-rg.name
-  short_name = "l1action"
+}
+resource "azurerm_logic_app_trigger_http_request" "slack_trigger" {
+  name         = "http-trigger"
+  logic_app_id = azurerm_logic_app_workflow.slack_notifier.id
+
+  schema = <<SCHEMA
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "data": {
+      "type": "object"
+    }
+  },
+  "required": ["data"]
+}
+SCHEMA
+}
+variable "SLACK_BOT_TOKEN" {
+  type        = string
+  description = "Token for authenticating requests to Slack"
+  sensitive   = true
+}
+resource "azurerm_logic_app_action_http" "post_to_slack" {
+  name         = "post-to-slack"
+  logic_app_id = azurerm_logic_app_workflow.slack_notifier.id
+  method       = "POST"
+  uri          = "https://slack.com/api/chat.postMessage"
+
+  headers = {
+    "Authorization" = "Bearer ${var.SLACK_BOT_TOKEN}"
+    "Content-Type"  = "application/json"
+  }
+
+  body = jsonencode({
+    channel = "testing"
+    text    = "@{triggerBody()['data']['essentials']['alertRule']}"
+  })
+}
+
+#Action group to send slack message, sms message, email, and push notif
+resource "azurerm_monitor_action_group" "example" {
+  name                = "PanduhzAlertAction"
+  resource_group_name = azurerm_resource_group.backend-rg.name
+  short_name          = "l1action"
+  webhook_receiver {
+    name        = "send_to_slack"
+    service_uri = azurerm_logic_app_trigger_http_request.slack_trigger.callback_url
+    use_common_alert_schema = true
+  }
   azure_app_push_receiver {
     name          = "pushtoadmin"
     email_address = "christopherchannn@gmail.com"
   }
   sms_receiver {
-    name = "pushtophone"
+    name         = "pushtophone"
     country_code = "1"
     phone_number = "6265607176"
   }
   email_receiver {
-    name = "emailtoadmin"
+    name          = "emailtoadmin"
     email_address = "christopherchannn@gmail.com"
   }
 }
 resource "azurerm_monitor_metric_alert" "alert1" {
-  name = "alert1-logalert"
+  name                = "alert1-logalert"
   resource_group_name = azurerm_resource_group.backend-rg.name
-  scopes = [azurerm_application_insights.panduhzinsight.id]
-  description = "If there are 10 requests in a minute"
+  scopes              = [azurerm_application_insights.panduhzinsight.id]
+  description         = "If there are 10 requests in a minute"
 
   criteria {
     metric_namespace = "microsoft.insights/components"
@@ -116,17 +166,17 @@ resource "azurerm_monitor_metric_alert" "alert1" {
   }
 }
 resource "azurerm_monitor_metric_alert" "alert2" {
-  name = "alert2-logalert"
+  name                = "alert2-logalert"
   resource_group_name = azurerm_resource_group.backend-rg.name
-  scopes = [azurerm_application_insights.panduhzinsight.id]
-  description = "Alert if avg response times are greater than 2 seconds"
+  scopes              = [azurerm_application_insights.panduhzinsight.id]
+  description         = "Alert if avg response times are greater than 2 seconds"
 
   criteria {
     metric_namespace = "microsoft.insights/components"
-    metric_name = "requests/duration"
-    aggregation = "Average"
-    operator = "GreaterThan"
-    threshold = "2000"
+    metric_name      = "requests/duration"
+    aggregation      = "Average"
+    operator         = "GreaterThan"
+    threshold        = "2000"
   }
   action {
     action_group_id = azurerm_monitor_action_group.example.id
@@ -134,7 +184,7 @@ resource "azurerm_monitor_metric_alert" "alert2" {
 }
 #creating linux function app resource
 resource "azurerm_linux_function_app" "crcbackend" {
-  depends_on = [ azurerm_cosmosdb_account.panduhz-db ]
+  depends_on          = [azurerm_cosmosdb_account.panduhz-db]
   name                = "backend-function-app"
   resource_group_name = azurerm_resource_group.backend-rg.name
   location            = azurerm_resource_group.backend-rg.location
@@ -154,13 +204,13 @@ resource "azurerm_linux_function_app" "crcbackend" {
     }
   }
   app_settings = {
-    CosmosConnectionString = azurerm_cosmosdb_account.panduhz-db.primary_sql_connection_string
+    CosmosConnectionString = azurerm_cosmosdb_account.panduhz-db.connection_strings[4]
   }
   #declaring source files
   #zip_deploy_file = "/src/"
 }
 
 output "cosmosdb_connectionstrings" {
-   value = azurerm_cosmosdb_account.panduhz-db.connection_strings
-   sensitive   = true
+  value     = azurerm_cosmosdb_account.panduhz-db.connection_strings[4]
+  sensitive = true
 }
