@@ -116,6 +116,7 @@ resource "azurerm_logic_app_action_http" "post_to_slack" {
   body = jsonencode({
     channel = "testing"
     text    = "@{triggerBody()['data']['essentials']['alertRule']}"
+
   })
 }
 
