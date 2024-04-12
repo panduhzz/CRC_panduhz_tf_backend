@@ -89,11 +89,11 @@ resource "azurerm_logic_app_trigger_http_request" "slack_trigger" {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "message": {
-      "type": "string"
+    "data": {
+      "type": "object"
     }
   },
-  "required": ["message"]
+  "required": ["data"]
 }
 SCHEMA
 }
@@ -115,7 +115,8 @@ resource "azurerm_logic_app_action_http" "post_to_slack" {
 
   body = jsonencode({
     channel = "testing"
-    text    = "@{triggerBody()['message']}"
+    text    = "@{triggerBody()['data']['essentials']['alertRule']}"
+
   })
 }
 
