@@ -17,7 +17,7 @@ entity1: Dict[str, Any] = {
 connectionString = (os.getenv('CosmosConnectionString'))
 #GET request
 @app.route(route="readDB", auth_level=func.AuthLevel.ANONYMOUS, methods=['GET'])
-def readDB():
+def readDB(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("Received GET request")
     from azure.core.exceptions import ResourceExistsError
     with TableClient.from_connection_string(conn_str=connectionString
@@ -38,7 +38,7 @@ def readDB():
     )
 
 @app.route(route="updateDB", auth_level=func.AuthLevel.ANONYMOUS, methods=['POST'])
-def updateDB():
+def updateDB(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("Received POST request")
     from azure.core.exceptions import ResourceExistsError
     with TableClient.from_connection_string(conn_str=connectionString
