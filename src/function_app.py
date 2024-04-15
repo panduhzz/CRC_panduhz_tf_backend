@@ -14,18 +14,55 @@ entity1: Dict[str, Any] = {
         "RowKey" : "counter",
         "count" : 0,
     }
+connectionString = (os.getenv('CosmosConnectionString'))
+#GET request
+@app.route(route="readDB", auth_level=func.AuthLevel.ANONYMOUS, methods=['GET'])
+def readDB():
+    logging.info("Received GET request")
+    from azure.core.exceptions import ResourceExistsError
+    with TableClient.from_connection_string(conn_str=connectionString
+                                                      ,table_name = "azurerm") as table_client:
+        try: 
+            table_client.create_table()
+        except ResourceExistsError:
+            entityCount = table_client.get_entity(partition_key="pk", row_key="counter")
+    response_obj = {
+        "message": "Hello from Azure Functions!",
+        "count": entity1["count"]}
+    
+    # Then, you return a response with JSON content
+    return func.HttpResponse(
+        json.dumps(response_obj),
+        status_code=200,
+        mimetype="application/json"
+    )
+
+@app.route(route="updateDB", auth_level=func.AuthLevel.ANONYMOUS, methods=['POST'])
+def updateDB():
+    logging.info("Received POST request")
+    from azure.core.exceptions import ResourceExistsError
+    with TableClient.from_connection_string(conn_str=connectionString
+                                                      ,table_name = "azurerm") as table_client:
+        try: 
+            table_client.create_table()
+        except ResourceExistsError:
+            logging.info("Table already exists")    
+        # Trying to create the entity, if exists update the entity
+        try:
+            entity1["count"] = entity1["count"] + 1
+            table_client.create_entity(entity=entity1)
+        except ResourceExistsError:
+            # querying count that's already in the table
+            entityCount = table_client.get_entity(partition_key="pk", row_key= "counter")
+            entity1["count"] = entityCount['count'] + 1
+            table_client.update_entity(entity=entity1) 
 
 # Reference
 # https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/samples/container_management.py#L231
-def read_DB():
+"""def read_DB():
     from azure.core.exceptions import ResourceExistsError
     global entity1
     # creating an entity to insert if entity does not exist
-    
-    connectionString = (os.getenv('CosmosConnectionString'))
-
-    
-
     # initializing tableclient from tableserviceclient
     with TableClient.from_connection_string(conn_str=connectionString
                                                       ,table_name = "azurerm") as table_client:
@@ -58,7 +95,7 @@ def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
         json.dumps(response_obj),
         status_code=200,
         mimetype="application/json"
-    )
+    )"""
 
 
     
