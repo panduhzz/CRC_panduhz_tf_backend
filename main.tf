@@ -74,62 +74,11 @@ resource "azurerm_service_plan" "panduhzsrvc" {
 
   sku_name = "Y1"
 }
-#Logic App for Slack Message
-resource "azurerm_logic_app_workflow" "slack_notifier" {
-  name                = "SlackNotifier"
-  location            = azurerm_resource_group.backend-rg.location
-  resource_group_name = azurerm_resource_group.backend-rg.name
-}
-resource "azurerm_logic_app_trigger_http_request" "slack_trigger" {
-  name         = "http-trigger"
-  logic_app_id = azurerm_logic_app_workflow.slack_notifier.id
-
-  schema = <<SCHEMA
-{
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "object",
-  "properties": {
-    "data": {
-      "type": "object"
-    }
-  },
-  "required": ["data"]
-}
-SCHEMA
-}
-variable "SLACK_BOT_TOKEN" {
-  type        = string
-  description = "Token for authenticating requests to Slack"
-  sensitive   = true
-}
-resource "azurerm_logic_app_action_http" "post_to_slack" {
-  name         = "post-to-slack"
-  logic_app_id = azurerm_logic_app_workflow.slack_notifier.id
-  method       = "POST"
-  uri          = "https://slack.com/api/chat.postMessage"
-
-  headers = {
-    "Authorization" = "Bearer ${var.SLACK_BOT_TOKEN}"
-    "Content-Type"  = "application/json"
-  }
-
-  body = jsonencode({
-    channel = "testing"
-    text    = "@{triggerBody()['data']['essentials']['alertRule']}"
-
-  })
-}
-
 #Action group to send slack message, sms message, email, and push notif
 resource "azurerm_monitor_action_group" "example" {
   name                = "PanduhzAlertAction"
   resource_group_name = azurerm_resource_group.backend-rg.name
   short_name          = "l1action"
-  webhook_receiver {
-    name        = "send_to_slack"
-    service_uri = azurerm_logic_app_trigger_http_request.slack_trigger.callback_url
-    use_common_alert_schema = true
-  }
   azure_app_push_receiver {
     name          = "pushtoadmin"
     email_address = "christopherchannn@gmail.com"
