@@ -87,6 +87,17 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_RBAC_CREDENTIALS }}
+          enable-AzPSSession: true
+      
+      - name: Get publish Profile
+        id: fncapp
+        shell: pwsh
+        run: |
+          $profile = Get-AzWebAppPublishingProfile `
+              -ResourceGroupName ${{ env.RESOURCE_GROUP_NAME }} `
+              -Name ${{env.AZURE_FUNCTIONAPP_NAME}}
+          $profile = $profile.Replace("`r", "").Replace("`n", "")
+          Write-Output "::set-output name=profile::$profile"
 
       - name: Setup Python Environment
         uses: actions/setup-python@v4
@@ -107,6 +118,6 @@ jobs:
         with:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          publish-profile: ${{secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE}}
+          publish-profile: ${{ steps.publishprofile.outputs.profile }}
           scm-do-build-during-deployment: true
           enable-oryx-build: true
