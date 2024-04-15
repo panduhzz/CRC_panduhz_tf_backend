@@ -93,10 +93,10 @@ jobs:
         id: publishprofile
         uses: aliencube/publish-profile-actions@v1
         env:
-          AZURE_CREDENTIALS: $\{\{ secrets.AZURE_CREDENTIALS_DEV \}\}
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_RBAC_CREDENTIALS }}
         with:
-          resourceGroupName: $\{\{ secrets.RESOURCE_GROUP_NAME_DEV \}\}
-          appName: $\{\{ secrets.RESOURCE_FUNCTIONAPP_NAME_DEV \}\}
+          resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
+          appName: ${{ env.RESOURCE_GROUP_NAME }}
 
       - name: Setup Python Environment
         uses: actions/setup-python@v4
