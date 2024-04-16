@@ -25,18 +25,14 @@ def readDB(req: func.HttpRequest) -> func.HttpResponse:
         try: 
             table_client.create_table()
         except ResourceExistsError:
-            entityCount = table_client.get_entity(partition_key="pk", row_key="counter")
-        try:
-            entity1["count"] = entity1["count"] + 1
-            table_client.create_entity(entity=entity1)
-        except ResourceExistsError:
-            # querying count that's already in the table
-            entityCount = table_client.get_entity(partition_key="pk", row_key= "counter")
-            entity1["count"] = entityCount['count'] + 1
-            table_client.update_entity(entity=entity1) 
+            try:
+                table_client.create_entity(entity=entity1)
+            except ResourceExistsError:
+                entityCount = table_client.get_entity(partition_key="pk", row_key="counter")
+
     response_obj = {
         "message": "Hello from Azure Functions!",
-        "count": entity1["count"]}
+        "count": entityCount["count"]}
     
     # Then, you return a response with JSON content
     return func.HttpResponse(
@@ -57,8 +53,8 @@ def updateDB(req: func.HttpRequest) -> func.HttpResponse:
             logging.info("Table already exists")    
         # Trying to create the entity, if exists update the entity
         try:
-            entity1["count"] = entity1["count"] + 1
             table_client.create_entity(entity=entity1)
+            entity1["count"] = entity1["count"] + 1
         except ResourceExistsError:
             # querying count that's already in the table
             entityCount = table_client.get_entity(partition_key="pk", row_key= "counter")
