@@ -62,8 +62,8 @@ def updateDB(req: func.HttpRequest) -> func.HttpResponse:
             entity1["count"] = entityCount['count'] + 1
             table_client.update_entity(entity=entity1)
     response_obj = {
-        "message: " : "Successfully updated entity",
-        "Updated Count: " : entity1["count"]
+        "message" : "Successfully updated entity",
+        "updatedCount" : entity1["count"]
     } 
     return func.HttpResponse(
         json.dumps(response_obj),
