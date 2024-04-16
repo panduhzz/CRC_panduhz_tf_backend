@@ -29,6 +29,7 @@ def readDB(req: func.HttpRequest) -> func.HttpResponse:
                 table_client.create_entity(entity=entity1)
             except ResourceExistsError:
                 entityCount = table_client.get_entity(partition_key="pk", row_key="counter")
+        entityCount = table_client.get_entity(partition_key="pk", row_key="counter")
 
     response_obj = {
         "message": "Hello from Azure Functions!",
