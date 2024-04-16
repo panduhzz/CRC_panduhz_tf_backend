@@ -60,7 +60,11 @@ def updateDB(req: func.HttpRequest) -> func.HttpResponse:
             # querying count that's already in the table
             entityCount = table_client.get_entity(partition_key="pk", row_key= "counter")
             entity1["count"] = entityCount['count'] + 1
-            table_client.update_entity(entity=entity1) 
+            table_client.update_entity(entity=entity1)
+    response_obj = {
+        "message: " : "Successfully updated entity",
+        "Updated Count: " : entity1["count"]
+    } 
 
 # Reference
 # https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/samples/container_management.py#L231
