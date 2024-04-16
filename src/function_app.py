@@ -65,6 +65,11 @@ def updateDB(req: func.HttpRequest) -> func.HttpResponse:
         "message: " : "Successfully updated entity",
         "Updated Count: " : entity1["count"]
     } 
+    return func.HttpResponse(
+        json.dumps(response_obj),
+        status_code=200,
+        mimetype="application/json"
+    )
 
 # Reference
 # https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/samples/container_management.py#L231
