@@ -13,22 +13,25 @@ provider "azurerm" {
     }
   }
 }
-
+variable "environment" {
+  description = "Declaring the environment based on if it is prod or test."
+  type = string
+}
 resource "azurerm_resource_group" "backend-rg" {
-  name     = "panduhz_backend_rg"
+  name     = "panduhz_backend_rg_${var.environment}"
   location = "westus2"
 
 }
 #backend storage account for function app
 resource "azurerm_storage_account" "bestorageacct" {
-  name                     = "panduhzbestorage"
+  name                     = "panduhzbestorage-${var.environment}"
   resource_group_name      = azurerm_resource_group.backend-rg.name
   location                 = azurerm_resource_group.backend-rg.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
 resource "azurerm_cosmosdb_account" "panduhz-db" {
-  name                = "panduhz-counter-cosmosdb"
+  name                = "panduhz-counter-cosmosdb-${var.environment}"
   location            = azurerm_resource_group.backend-rg.location
   resource_group_name = azurerm_resource_group.backend-rg.name
   offer_type          = "Standard"
@@ -140,7 +143,7 @@ resource "azurerm_monitor_metric_alert" "alert2" {
 #creating linux function app resource
 resource "azurerm_linux_function_app" "crcbackend" {
   depends_on          = [azurerm_cosmosdb_account.panduhz-db]
-  name                = "backend-function-app"
+  name                = "backend-function-app-${var.environment}"
   resource_group_name = azurerm_resource_group.backend-rg.name
   location            = azurerm_resource_group.backend-rg.location
   #using backend storage account
