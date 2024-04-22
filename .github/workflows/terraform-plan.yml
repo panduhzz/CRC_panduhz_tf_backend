@@ -42,8 +42,53 @@ jobs:
         with:
           run: ${{ steps.apply-run.outputs.run_id }}
           comment: "Apply Run from GitHub Actions CI ${{ github.sha }}"
-  test:
+  deployfunction: 
     needs: terraform
+    name: "Deploy Function"
+    runs-on: Ubuntu-latest
+    steps:
+      - name: Checkout GitHub Action
+        uses: actions/checkout@v3
+      
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_RBAC_CREDENTIALS }}
+          enable-AzPSSession: true
+      
+      - name: 'Get FunctionApp publish profile'
+        id: publishprofile
+        uses: aliencube/publish-profile-actions@v1
+        env:
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_RBAC_CREDENTIALS }}
+        with:
+          resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
+          appName: ${{ env.RESOURCE_GROUP_NAME }}
+
+      - name: Setup Python Environment
+        uses: actions/setup-python@v4
+        with: 
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: 'Install project dependencies using Pip'
+        shell: bash
+        run: |
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+          popd
+
+      - name: 'Run Azure Functions Action'
+        uses: Azure/functions-action@v1
+        id: fa
+        with:
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          publish-profile: ${{ steps.publishprofile.outputs.profile }}
+          scm-do-build-during-deployment: true
+          enable-oryx-build: true
+  test:
+    needs: deployfunction
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
