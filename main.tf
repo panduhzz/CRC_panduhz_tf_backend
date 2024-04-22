@@ -24,7 +24,7 @@ resource "azurerm_resource_group" "backend-rg" {
 }
 #backend storage account for function app
 resource "azurerm_storage_account" "bestorageacct" {
-  name                     = "panduhzbestorage-${var.environment}"
+  name                     = "panduhzbestorage${var.environment}"
   resource_group_name      = azurerm_resource_group.backend-rg.name
   location                 = azurerm_resource_group.backend-rg.location
   account_tier             = "Standard"
