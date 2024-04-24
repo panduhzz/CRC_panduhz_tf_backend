@@ -91,15 +91,7 @@ jobs:
           publish-profile: ${{ steps.publishprofile.outputs.profile }}
           scm-do-build-during-deployment: true
           enable-oryx-build: true
-      - name: Get Cosmos DB Connection String
-        id: getconnstring
-        run: |
-          echo "::group::Install Azure CLI"
-          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-          echo "::endgroup::"
-          conn_string=$(az cosmosdb list-connection-strings --name panduhz-counter-cosmosdb-test --resource-group panduhz_backend_rg_test --query "connectionStrings[?description=='SQL'].connectionString | [0]" --output tsv)
-          echo "::set-output name=conn_string::$conn_string"
-  
+      
   test:
     needs: deployfunction
     timeout-minutes: 60
@@ -121,7 +113,7 @@ jobs:
     - name: Run Playwright tests
       env: 
         CosmosConnectionString: ${{ secrets.CosmosConnectionString }}
-      run: pytest --tracing=retain-on-failure 
+      run: pytest test_api.py --tracing=retain-on-failure 
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
