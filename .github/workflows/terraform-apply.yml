@@ -7,7 +7,7 @@ on:
 env:
   TF_CLOUD_ORGANIZATION: "panduhz"
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
-  TF_WORKSPACE: "panduhz-backend"
+  TF_WORKSPACE: "panduhz-backend-main"
   CONFIG_DIRECTORY: "./"
   AZURE_FUNCTIONAPP_NAME: 'backend-function-app'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './src'
