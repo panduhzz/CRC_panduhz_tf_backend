@@ -24,6 +24,7 @@ def readDB(req: func.HttpRequest) -> func.HttpResponse:
                                                       ,table_name = "azurerm") as table_client:
         try: 
             table_client.create_table()
+            entityCount = table_client.get_entity(partition_key="pk", row_key="counter")
         except ResourceExistsError:
             try:
                 table_client.create_entity(entity=entity1)
