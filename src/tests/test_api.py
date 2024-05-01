@@ -43,5 +43,5 @@ def test_post_update():
 def test_post_request_status():
     with sync_playwright() as p:
         context = p.request.new_context()
-        response = context.post("https://backend-function-app-test.azurewebsites.net/api/updateDB")
+        response = context.post("https://panduhz-backend-app-test.azurewebsites.net/api/updateDB")
         assert response.ok and response.status == 200
