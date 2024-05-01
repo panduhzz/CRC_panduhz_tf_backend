@@ -113,7 +113,7 @@ jobs:
     - name: Run Playwright tests
       env: 
         CosmosConnectionString: ${{ secrets.CosmosConnectionString }}
-      run: pytest srcs/tests/test_api.py --tracing=retain-on-failure 
+      run: pytest src/tests/test_api.py --tracing=retain-on-failure 
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
