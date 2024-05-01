@@ -9,7 +9,7 @@ env:
   TF_WORKSPACE: "panduhz-backend-test"
   CONFIG_DIRECTORY: "./"
   RESOURCE_GROUP_NAME: "panduhz_backend_rg_test"
-  AZURE_FUNCTIONAPP_NAME: 'backend-function-app-test'
+  AZURE_FUNCTIONAPP_NAME: 'panduhz-backend-app--test'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './src'
   PYTHON_VERSION: '3.11'
 
