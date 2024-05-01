@@ -94,6 +94,7 @@ jobs:
       
   test:
     needs: deployfunction
+    name: "Test API"
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
