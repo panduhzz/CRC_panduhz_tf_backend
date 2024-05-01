@@ -9,7 +9,7 @@ env:
   TF_WORKSPACE: "panduhz-backend-test"
   CONFIG_DIRECTORY: "./"
   RESOURCE_GROUP_NAME: "panduhz_backend_rg_test"
-  AZURE_FUNCTIONAPP_NAME: 'backend-function-app-test'
+  AZURE_FUNCTIONAPP_NAME: 'panduhz-backend-app-test'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './src'
   PYTHON_VERSION: '3.11'
 
@@ -121,7 +121,19 @@ jobs:
         name: playwright-traces
         path: test-results/
         retention-days: 7
-
+  destroy:
+    name: "Destroy testing workspace"
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - name: terraform destroy
+      uses: dflook/terraform-destroy-workspace@v1
+      with:
+        path: terraform
+        workspace: ${{ github.head_ref }}
 
       # - name: Update PR
       #   uses: actions/github-script@v6

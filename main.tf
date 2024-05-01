@@ -17,7 +17,6 @@ variable "environment" {
   description = "Declaring the environment based on if it is prod or test."
   type = string
 }
-#test
 resource "azurerm_resource_group" "backend-rg" {
   name     = "panduhz_backend_rg_${var.environment}"
   location = "westus2"
@@ -144,7 +143,7 @@ resource "azurerm_monitor_metric_alert" "alert2" {
 #creating linux function app resource
 resource "azurerm_linux_function_app" "crcbackend" {
   depends_on          = [azurerm_cosmosdb_account.panduhz-db]
-  name                = "backend-function-app-${var.environment}"
+  name                = "panduhz-backend-app-${var.environment}"
   resource_group_name = azurerm_resource_group.backend-rg.name
   location            = azurerm_resource_group.backend-rg.location
   #using backend storage account
