@@ -17,6 +17,7 @@ variable "environment" {
   description = "Declaring the environment based on if it is prod or test."
   type = string
 }
+#test
 resource "azurerm_resource_group" "backend-rg" {
   name     = "panduhz_backend_rg_${var.environment}"
   location = "westus2"
