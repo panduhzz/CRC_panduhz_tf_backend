@@ -9,7 +9,7 @@ env:
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
   TF_WORKSPACE: "panduhz-backend-main"
   CONFIG_DIRECTORY: "./"
-  AZURE_FUNCTIONAPP_NAME: 'backend-function-app-prod'
+  AZURE_FUNCTIONAPP_NAME: 'panduhz-backend-app-prod'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './src'
   PYTHON_VERSION: '3.11'
   RESOURCE_GROUP_NAME: 'Terraform Test'
