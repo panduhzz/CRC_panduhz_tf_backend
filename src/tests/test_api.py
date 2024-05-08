@@ -36,6 +36,7 @@ def test_post_update():
         json_data = json.loads(response.body())
         initialCount = json_data["updatedCount"]
         time.sleep(1)
+        
         response = context.post("https://panduhz-backend-app-test.azurewebsites.net/api/updateDB")
         json_data = json.loads(response.body())
         count = json_data["updatedCount"]
