@@ -15,8 +15,7 @@ entity1: Dict[str, Any] = {
         "RowKey" : "counter",
         "count" : 0,
     }
-#connectionString = (os.getenv('CosmosConnectionString'))
-connectionString = "DefaultEndpointsProtocol=https;AccountName=panduhz-counter-cosmosdb-test;AccountKey=meVFC6fT1Ochy8mWyD38ykrymABmInb2VcfeNY6dCnI0I8T4tMthGZ5XmroGA6tRqjqt1Uer54bzACDb4a2X9Q==;TableEndpoint=https://panduhz-counter-cosmosdb-test.table.cosmos.azure.com:443/;"
+connectionString = (os.getenv('CosmosConnectionString'))
 
 # Global variable to track the last update time
 last_update_time = 0
