@@ -39,6 +39,7 @@ def update_count():
             entityCount = table_client.get_entity(partition_key="pk", row_key="counter")
             entity1["count"] = entityCount['count'] + 1
             table_client.update_entity(entity=entity1)
+        return entity1["count"]    
 
 # Debounce the updateDB function
 def debounced_update_count():
@@ -46,7 +47,8 @@ def debounced_update_count():
     current_time = time.time()
     if current_time - last_update_time > debounce_delay:
         last_update_time = current_time
-        update_count()
+        count = update_count()
+        return count
 
 #GET request
 @app.route(route="readDB", auth_level=func.AuthLevel.ANONYMOUS, methods=['GET'])
@@ -79,10 +81,11 @@ def readDB(req: func.HttpRequest) -> func.HttpResponse:
 @app.route(route="updateDB", auth_level=func.AuthLevel.ANONYMOUS, methods=['POST'])
 def updateDB(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("Received POST request")
-    debounced_update_count()
+    count = debounced_update_count()
 
     response_obj = {
-        "message": "Update request received"
+        "message": "Update request received",
+        "updatedCount": count
     }
 
     return func.HttpResponse(
