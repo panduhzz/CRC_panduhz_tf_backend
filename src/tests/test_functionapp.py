@@ -3,7 +3,7 @@ import pytest
 from playwright.async_api import async_playwright
 from azure.data.tables import TableClient
 import os
-
+import time
 import re
 import pytest_asyncio
 
@@ -32,7 +32,7 @@ async def test_number_updates():
         getVisitorCounter = await text.text_content()
         reMatch1 = re.search(r'\d+', getVisitorCounter)
         firstCount = int(reMatch1.group())
-
+        time.sleep(1)
         #now that we got the current count, we will need to get an updated count
         await page.reload()
         # Now verify the counter has updated. This requires the counter on the page to actually change.
