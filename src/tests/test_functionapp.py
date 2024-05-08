@@ -35,7 +35,6 @@ async def test_number_updates():
 
         #now that we got the current count, we will need to get an updated count
         await page.reload()
-        await page.wait_for_load_state('domcontentloaded')
         # Now verify the counter has updated. This requires the counter on the page to actually change.
         await page.wait_for_function(r"document.querySelector('.visitor-counter').textContent.match(/\d+/)")
         text2 = await page.query_selector('.visitor-counter')
