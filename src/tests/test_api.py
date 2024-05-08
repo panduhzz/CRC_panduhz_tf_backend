@@ -1,5 +1,5 @@
 import pytest
-
+import time
 from playwright.sync_api import sync_playwright, Playwright
 import playwright
 from azure.data.tables import TableClient
@@ -35,6 +35,7 @@ def test_post_update():
         response = context.post("https://panduhz-backend-app-test.azurewebsites.net/api/updateDB")
         json_data = json.loads(response.body())
         initialCount = json_data["updatedCount"]
+        time.sleep(1)
         response = context.post("https://panduhz-backend-app-test.azurewebsites.net/api/updateDB")
         json_data = json.loads(response.body())
         count = json_data["updatedCount"]
