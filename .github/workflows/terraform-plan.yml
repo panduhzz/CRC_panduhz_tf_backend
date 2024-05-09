@@ -121,18 +121,5 @@ jobs:
         name: playwright-traces
         path: test-results/
         retention-days: 7
-  destroy:
-    name: "Destroy testing workspace"
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-      
-    - name: terraform destroy
-      uses: dflook/terraform-destroy-workspace@v1
-      with:
-        path: terraform
-        workspace: ${{ github.head_ref }}
 
      
