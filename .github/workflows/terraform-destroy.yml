@@ -15,18 +15,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Delete Infrastructure
-        env:
-          TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
-        run: |
-          # Example script to delete resources using Terraform Cloud API
-          export TF_WORKSPACE="panduhz-backend-test"
-          export TF_ORG="panduhz"
-          export TF_API_URL="https://app.terraform.io/api/v2"
-          
-          # Make API call to delete resources
-          curl \
-            --header "Authorization: Bearer $TF_API_TOKEN" \
-            --header "Content-Type: application/vnd.api+json" \
-            --request DELETE \
-            $TF_API_URL/workspaces/$TF_ORG/$TF_WORKSPACE/destroy
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_RBAC_CREDENTIALS }}
+      
+      - name: 'Delete Resource Group'
+        uses: azure/CLI@v1
+        with: 
+          inlineScript: |
+            az group delete --name panduhz_backend_rg_test
