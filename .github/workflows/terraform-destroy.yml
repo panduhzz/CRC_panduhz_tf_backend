@@ -24,4 +24,4 @@ jobs:
         uses: azure/CLI@v1
         with: 
           inlineScript: |
-            az group delete --name panduhz_backend_rg_test
+            az group delete --name panduhz_backend_rg_test --yes
