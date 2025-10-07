@@ -51,8 +51,19 @@ def debounced_update_count():
         return count
 
 #GET request
-@app.route(route="readDB", auth_level=func.AuthLevel.ANONYMOUS, methods=['GET'])
+@app.route(route="readDB", auth_level=func.AuthLevel.ANONYMOUS, methods=['GET', 'OPTIONS'])
 def readDB(req: func.HttpRequest) -> func.HttpResponse:
+    # Handle preflight OPTIONS request
+    if req.method == 'OPTIONS':
+        return func.HttpResponse(
+            status_code=200,
+            headers={
+                "Access-Control-Allow-Origin": "https://www.panduhz.com",
+                "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type, Authorization"
+            }
+        )
+    
     logging.info("Received GET request")
     from azure.core.exceptions import ResourceExistsError
     with TableClient.from_connection_string(conn_str=connectionString
@@ -75,11 +86,27 @@ def readDB(req: func.HttpRequest) -> func.HttpResponse:
     return func.HttpResponse(
         json.dumps(response_obj),
         status_code=200,
-        mimetype="application/json"
+        mimetype="application/json",
+        headers={
+            "Access-Control-Allow-Origin": "https://www.panduhz.com",
+            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization"
+        }
     )
 
-@app.route(route="updateDB", auth_level=func.AuthLevel.ANONYMOUS, methods=['POST'])
+@app.route(route="updateDB", auth_level=func.AuthLevel.ANONYMOUS, methods=['POST', 'OPTIONS'])
 def updateDB(req: func.HttpRequest) -> func.HttpResponse:
+    # Handle preflight OPTIONS request
+    if req.method == 'OPTIONS':
+        return func.HttpResponse(
+            status_code=200,
+            headers={
+                "Access-Control-Allow-Origin": "https://www.panduhz.com",
+                "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type, Authorization"
+            }
+        )
+    
     logging.info("Received POST request")
     count = debounced_update_count()
 
@@ -91,7 +118,12 @@ def updateDB(req: func.HttpRequest) -> func.HttpResponse:
     return func.HttpResponse(
         json.dumps(response_obj),
         status_code=200,
-        mimetype="application/json"
+        mimetype="application/json",
+        headers={
+            "Access-Control-Allow-Origin": "https://www.panduhz.com",
+            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization"
+        }
     )
 
 # Reference
